@@ -14,7 +14,7 @@ export function Login() {
         let user_config = await fetchUser(res.profileObj.googleId).catch((err) => console.log({ err }));
         if(!user_config) {
             const response = await addUser(res.profileObj.googleId, res.profileObj.email);
-            if(!response.ok) return setError(res.profileObj);
+            if(!response.ok) return setError(response);
             user_config = await fetchUser(res.profileObj.googleId).catch((err) => console.log({ err }));
         }
         if(!user_config) return setError(res.profileObj);
