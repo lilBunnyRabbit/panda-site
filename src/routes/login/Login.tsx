@@ -4,15 +4,19 @@ import React from 'react';
 import { GoogleLogin } from 'react-google-login';
 import { useLoginStyles } from "./LoginStyle";
 import { Paper, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@material-ui/core";
-import { fetchUser } from "./LoginUtils";
+import { addUser, fetchUser } from "./LoginUtils";
 export function Login() {
     const [error, setError] = React.useState<any>();
     const classes = useLoginStyles();
     const dispatch = useDispatch();
     const handleLogin = async (res: any) => {
-        console.log({ res });
-        if (!res.profileObj) return;
-        const user_config = await fetchUser(res.profileObj.googleId).catch((err) => console.log({ err }));
+        if (!res.profileObj) return setError({ error: "Failed to fetch Google user" });
+        let user_config = await fetchUser(res.profileObj.googleId).catch((err) => console.log({ err }));
+        if(!user_config) {
+            const response = await addUser(res.profileObj.googleId, res.profileObj.email);
+            if(!response.ok) return setError(res.profileObj);
+            user_config = await fetchUser(res.profileObj.googleId).catch((err) => console.log({ err }));
+        }
         if(!user_config) return setError(res.profileObj);
     
         dispatch({ type: configConstants.SET_USER_CONFIG, payload: user_config });
