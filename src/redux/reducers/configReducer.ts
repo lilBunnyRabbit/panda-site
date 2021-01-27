@@ -14,7 +14,8 @@ export type ConfigState = {
         _id: any,
         email: string,
         time_created: number,
-        household?: string
+        household?: string,
+        permissions: string[]
     }
 }
 

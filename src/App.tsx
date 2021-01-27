@@ -11,8 +11,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import BallotIcon from '@material-ui/icons/Ballot';
-import HomeIcon from '@material-ui/icons/Home';
 import SunIcon from '@material-ui/icons/Brightness5';
 import MoonIcon from '@material-ui/icons/Brightness3';
 import Box from "@material-ui/core/Box";
@@ -26,7 +24,7 @@ import { useGoogleLogout } from 'react-google-login';
 
 import { createAppTheme, useAppStyles } from "./AppStyle";
 import { Login } from "./routes/login/Login";
-import { Routes } from "./routes/Routes";
+import { getRoutes, Routes } from "./routes/Routes";
 import { Reducers } from './redux/reducer';
 import { configConstants } from "./redux/reducers/configReducer";
 
@@ -34,7 +32,7 @@ export default function App() {
   const config = useSelector((state: Reducers) => state.config);
   const MemoBase = React.useMemo(() => Base, []);
 
-  if (!config?.user || !config?.user_config) return <Login />
+  if (!config?.user || !config?.user_config) return <Login />;
 
   return (
     <Router>
@@ -95,8 +93,13 @@ function Base({ children }: any) {
         <Typography variant="h5" children="Navigation" align="left" className={classes.drawerTitle} />
         <Divider />
         <List>
-          <NavItem url="/" text="Home" icon={<HomeIcon />} />
-          { config?.user_config?.household && <NavItem url="/grocery-list" text="Grocery List" icon={<BallotIcon />} /> }
+          {getRoutes(config).map((routeConfig) => 
+            <NavItem 
+              url={routeConfig.path}
+              text={routeConfig.name}
+              icon={<routeConfig.icon />}
+            />
+          )}
         </List>
       </Drawer>
     </ThemeProvider>

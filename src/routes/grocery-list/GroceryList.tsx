@@ -113,6 +113,21 @@ function ListTab({ data, refetch, addToHistory }: any) {
   const classes = useGroceryListStyles();
   const ListElement = ({ element }: any) => {
     const [clicked, setClicked] = React.useState(false);
+    
+    const itemText = clicked
+      ? <ListItemText 
+          primary={(
+            <Typography className={classes.itemInfo}>
+              Added by&nbsp;<Typography color="secondary">{element?.username}</Typography>
+            </Typography>
+          )} 
+          secondary={<Typography color="textSecondary" children={relativeTimeDifference(element?.time_created)} />}
+        />
+      : <ListItemText
+          primary={<Typography children={element?.name} />}
+          secondary={<Typography color="textSecondary" children={element?.comment} />}
+        />;
+
     return (
       <ListItem button divider={true} onClick={() => { if (element?.username) setClicked(!clicked); }}>
         <ListItemAvatar>
@@ -123,28 +138,7 @@ function ListTab({ data, refetch, addToHistory }: any) {
             <CheckIcon style={{ color: green[500] }} />
           </IconButton>
         </ListItemAvatar>
-        <div>
-          {!clicked &&
-            <Zoom in={!clicked}>
-              <ListItemText
-                primary={<Typography children={element?.name} />}
-                secondary={<Typography color="textSecondary" children={element?.comment} />}
-              />
-            </Zoom>
-          }
-          {clicked &&
-            <Zoom in={clicked}>
-              <ListItemText 
-                primary={(
-                  <Typography className={classes.itemInfo}>
-                    Added by&nbsp;<Typography color="secondary">{element?.username}</Typography>
-                  </Typography>
-                )} 
-                secondary={<Typography color="textSecondary" children={relativeTimeDifference(element?.time_created)} />}
-              />
-            </Zoom>
-          }
-        </div>
+        <div children={itemText} />
       </ListItem>
     )
   };
