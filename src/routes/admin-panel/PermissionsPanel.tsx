@@ -44,7 +44,10 @@ export function PermissionsPanel() {
           color="primary"
           onDelete={() => handleRemovePermission(permission._id)}
           label={permission.name}
-          icon={icon && React.createElement(icon, {})}
+          icon={icon && React.createElement(icon, {
+            fontSize: "small"
+          })}
+          style={icon && { paddingLeft: "5px"}}
         />
       );
     });
