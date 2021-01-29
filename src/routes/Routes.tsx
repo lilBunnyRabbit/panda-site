@@ -3,9 +3,13 @@ import { useSelector } from "react-redux";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Reducers } from "../redux/reducer";
 import { ConfigState } from "../redux/reducers/configReducer";
+
 import BallotIcon from "@material-ui/icons/Ballot";
 import HomeIcon from "@material-ui/icons/Home";
 import FingerprintIcon from "@material-ui/icons/Fingerprint";
+import VideogameAssetIcon from '@material-ui/icons/VideogameAsset';
+import LocalGroceryStoreIcon from '@material-ui/icons/LocalGroceryStore';
+import ListIcon from '@material-ui/icons/List';
 
 import { Home } from "./home/Home";
 import { GroceryList } from "./grocery-list/GroceryList";
@@ -33,21 +37,21 @@ export const routesConfigs: RouteConfig[] = [
     path: "/grocery-list",
     element: GroceryList,
     permission: "grocery_list",
-    icon: BallotIcon,
+    icon: LocalGroceryStoreIcon,
   },
   {
     name: "Wishlist",
     path: "/wishlist",
     element: Wishlist,
     permission: "wishlist",
-    icon: BallotIcon,
+    icon: ListIcon,
   },
   {
     name: "Game Dashboard",
     path: "/game-dashboard",
     element: GameDashboard,
     permission: "game_dashboard",
-    icon: BallotIcon,
+    icon: VideogameAssetIcon,
   },
   {
     name: "Admin Panel",

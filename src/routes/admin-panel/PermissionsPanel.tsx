@@ -15,6 +15,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { routesConfigs } from "../Routes";
 
 export function PermissionsPanel() {
   const classes = usePermissionsPanelStyles();
@@ -36,13 +37,14 @@ export function PermissionsPanel() {
 
   const PermissionChips = () => {
     return (permissions || []).map((permission: any) => {
+      const icon: any = routesConfigs.find((routeConfig: any) => routeConfig.permission == permission._id)?.icon;
       return (
         <Chip
           variant="outlined"
           color="primary"
           onDelete={() => handleRemovePermission(permission._id)}
           label={permission.name}
-          icon={<FaceIcon />}
+          icon={icon && React.createElement(icon, {})}
         />
       );
     });
