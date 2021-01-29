@@ -40,19 +40,8 @@ export const useUserPanelStyles = makeStyles((theme: Theme) => {
       justifyContent: "flex-start",
       width: "100%",
     },
-    root2: {
-      minWidth: 275,
-    },
-    bullet: {
-      display: "inline-block",
-      margin: "0 2px",
-      transform: "scale(0.8)",
-    },
-    title: {
-      fontSize: 14,
-    },
-    pos: {
-      marginBottom: 12,
+    card: {
+      width: "100%",
     },
     titleBox: {
       display: "flex",
@@ -66,12 +55,105 @@ export const useUserPanelStyles = makeStyles((theme: Theme) => {
       width: "100%",
       flex: 1,
     },
-    userJson: {
+    userDataBox: {
       backgroundColor: "#303030",
       padding: theme.spacing(1),
       color: theme.palette.primary.light,
       resize: "none",
-      width: "100%"
+      width: "100%",
+      maxHeight: "200px",
+      overflowY: "auto",
+    },
+    userData: {
+      width: "100%",
+      backgroundColor: "rgb(0, 0, 0, 0)",
+      outline: "none",
+      border: "none",
+      resize: "none",
+      padding: theme.spacing(1),
+      color: theme.palette.secondary.light,
+    },
+    inputName: {
+      marginBottom: theme.spacing(3),
+    },
+    inputHouseholdForm: {
+      width: "100%",
+      marginBottom: theme.spacing(3),
+    },
+    inputHousehold: {
+      width: "100%",
+    },
+    backButton: {
+      marginBottom: theme.spacing(3),
+    },
+    updateUserButton: {
+      width: "100%",
+      margin: "8px",
+    },
+    accordion: {
+      marginBottom: theme.spacing(2),
+    },
+  });
+});
+
+export const usePermissionsPanelStyles = makeStyles((theme: Theme) => {
+  return createStyles({
+    root: {
+      height: "100%",
+      position: "relative",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "flex-start",
+      width: "100%",
+    },
+    titleBox: {
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      width: "100%",
+      marginBottom: theme.spacing(3),
+    },
+    tableBox: {
+      height: "100%",
+      width: "100%",
+      flex: 1,
+    },
+    permissionsBox: {
+      padding: theme.spacing(2),
+      display: "flex",
+      justifyContent: "center",
+      flexWrap: "wrap",
+      "& > *": {
+        margin: theme.spacing(0.5),
+      },
+    }
+  });
+});
+
+export const useHouseholdsPanelStyles = makeStyles((theme: Theme) => {
+  return createStyles({
+    root: {
+      height: "100%",
+      position: "relative",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "flex-start",
+      width: "100%",
+    },
+    titleBox: {
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      width: "100%",
+      marginBottom: theme.spacing(3),
+    },
+    tableBox: {
+      height: "100%",
+      width: "100%",
+      flex: 1,
+    },
+    removeButton: {
+      color: red[700]
     },
   });
 });

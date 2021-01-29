@@ -105,8 +105,8 @@ export default function TransferList({ left, setLeft, right, setRight }: any) {
   );
 
   return (
-    <Grid container spacing={2} justify="center" alignItems="center" className={classes.root}>
-      <Grid item style={{ flex: 1 }}>{customList(left)}</Grid>
+    <Grid container spacing={0} justify="center" alignItems="center" className={classes.root}>
+      <Grid item style={{ flex: 1, marginRight: "20px" }}>{customList(left)}</Grid>
       <Grid item style={{ flex: 0 }}>
         <Grid container direction="column" alignItems="center">
           <Button
@@ -151,7 +151,7 @@ export default function TransferList({ left, setLeft, right, setRight }: any) {
           </Button>
         </Grid>
       </Grid>
-      <Grid item style={{ flex: 1 }}>{customList(right)}</Grid>
+      <Grid item style={{ flex: 1, marginLeft: "20px"  }}>{customList(right)}</Grid>
     </Grid>
   );
 }
