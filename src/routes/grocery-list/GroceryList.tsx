@@ -1,47 +1,49 @@
-import React from 'react';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import IconButton from '@material-ui/core/IconButton';
-import CheckIcon from '@material-ui/icons/Check';
-import TextField from '@material-ui/core/TextField';
-import { useQuery } from 'react-query'
-import { Button, ListItemAvatar, Paper } from '@material-ui/core';
+import React from "react";
+import List from "@material-ui/core/List";
+import Typography from "@material-ui/core/Typography";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import IconButton from "@material-ui/core/IconButton";
+import CheckIcon from "@material-ui/icons/Check";
+import TextField from "@material-ui/core/TextField";
+import { useQuery } from "react-query";
+import { Button, ListItemAvatar, Paper } from "@material-ui/core";
 import { green } from "@material-ui/core/colors";
-import { getGroceryList, deleteGroceryItem, addGroceryItem, relativeTimeDifference } from './GroceryListUtils';
-import { useGroceryListStyles } from './GroceryListStyle';
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
-import { ErrorCard } from '../../components/error/ErrorCard';
-import { Loading } from '../../components/loading/Loading';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import HistoryIcon from '@material-ui/icons/History';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Zoom from '@material-ui/core/Zoom';
+import { relativeTimeDifference } from "./GroceryListUtils";
+import { useGroceryListStyles } from "./GroceryListStyle";
+import Fab from "@material-ui/core/Fab";
+import AddIcon from "@material-ui/icons/Add";
+import { ErrorCard } from "../../components/error/ErrorCard";
+import { Loading } from "../../components/loading/Loading";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import HistoryIcon from "@material-ui/icons/History";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Zoom from "@material-ui/core/Zoom";
 
-import { Reducers } from '../../redux/reducer';
-import { useSelector } from 'react-redux';
+import { Reducers } from "../../redux/reducer";
+import { useSelector } from "react-redux";
+import { groceryListRequests } from "../../utils/requests";
 
-const panels = [
-  "List",
-  "History"
-]
+const panels = ["List", "History"];
 
 export function GroceryList() {
   const config = useSelector((state: Reducers) => state.config);
-  const { isLoading, error, data, refetch } = useQuery<any, any, any>('listData', () => getGroceryList(config.user_config?.household));
+  const { isLoading, error, data, refetch } = useQuery<any, any, any>(
+    "listData",
+    () => groceryListRequests.LIST(config.user_config?.household)
+  );
   const [historyData, setHistoryData] = React.useState<any[]>([]);
   const [value, setValue] = React.useState(0);
   const [open, setOpen] = React.useState(false);
 
   const classes = useGroceryListStyles();
 
-  const addToHistory = (element: any) => setHistoryData([element, ...historyData]);
+  const addToHistory = (element: any) =>
+    setHistoryData([element, ...historyData]);
   const removeFromHistory = (element: any) => {
     const index = historyData.findIndex((el: any) => element.name == el.name);
     if (index == -1) return;
@@ -49,31 +51,40 @@ export function GroceryList() {
     setHistoryData(historyData);
   };
 
-  const tabs = React.useMemo(() => panels.map((name: string) => <Tab label={name} />), [panels]);
-  const list = React.useMemo(() => <ListTab
-    data={data}
-    refetch={refetch}
-    addToHistory={addToHistory}
-  />, [data, refetch, addToHistory]);
+  const tabs = React.useMemo(
+    () => panels.map((name: string) => <Tab label={name} />),
+    [panels]
+  );
+  const list = React.useMemo(
+    () => <ListTab data={data} refetch={refetch} addToHistory={addToHistory} />,
+    [data, refetch, addToHistory]
+  );
 
-  const history_list = React.useMemo(() => <HistoryTab
-    data={historyData}
-    refetch={refetch}
-    removeFromHistory={removeFromHistory}
-  />, [historyData, refetch, removeFromHistory]);
+  const history_list = React.useMemo(
+    () => (
+      <HistoryTab
+        data={historyData}
+        refetch={refetch}
+        removeFromHistory={removeFromHistory}
+      />
+    ),
+    [historyData, refetch, removeFromHistory]
+  );
 
   if (error) return <ErrorCard error={error} />;
-  if (isLoading) return <Loading />
+  if (isLoading) return <Loading />;
   if (!data) return <ErrorCard />;
 
   const handleClose = () => setOpen(false);
 
-  const TabPanel = ({ children, value, index }: any) => <div
-    role="tabpanel"
-    hidden={value !== index}
-    className={classes.tabPanel}
-    children={value === index && children}
-  />;
+  const TabPanel = ({ children, value, index }: any) => (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      className={classes.tabPanel}
+      children={value === index && children}
+    />
+  );
 
   return (
     <div className={classes.root}>
@@ -113,43 +124,61 @@ function ListTab({ data, refetch, addToHistory }: any) {
   const classes = useGroceryListStyles();
   const ListElement = ({ element }: any) => {
     const [clicked, setClicked] = React.useState(false);
-    
-    const itemText = clicked
-      ? <ListItemText 
-          primary={(
-            <Typography className={classes.itemInfo}>
-              Added by&nbsp;<Typography color="secondary">{element?.username}</Typography>
-            </Typography>
-          )} 
-          secondary={<Typography color="textSecondary" children={relativeTimeDifference(element?.time_created)} />}
-        />
-      : <ListItemText
-          primary={<Typography children={element?.name} />}
-          secondary={<Typography color="textSecondary" children={element?.comment} />}
-        />;
+
+    const itemText = clicked ? (
+      <ListItemText
+        primary={
+          <Typography className={classes.itemInfo}>
+            Added by&nbsp;
+            <Typography color="secondary">{element?.username}</Typography>
+          </Typography>
+        }
+        secondary={
+          <Typography
+            color="textSecondary"
+            children={relativeTimeDifference(element?.time_created)}
+          />
+        }
+      />
+    ) : (
+      <ListItemText
+        primary={<Typography children={element?.name} />}
+        secondary={
+          <Typography color="textSecondary" children={element?.comment} />
+        }
+      />
+    );
 
     return (
-      <ListItem button divider={true} onClick={() => { if (element?.username) setClicked(!clicked); }}>
+      <ListItem
+        button
+        divider={true}
+        onClick={() => {
+          if (element?.username) setClicked(!clicked);
+        }}
+      >
         <ListItemAvatar>
-          <IconButton edge="end" aria-label="delete" onClick={() => {
-            addToHistory(element);
-            deleteGroceryItem(element).then(() => refetch())
-          }}>
+          <IconButton
+            edge="end"
+            aria-label="delete"
+            onClick={() => {
+              addToHistory(element);
+              groceryListRequests.DELETE(element).then(() => refetch());
+            }}
+          >
             <CheckIcon style={{ color: green[500] }} />
           </IconButton>
         </ListItemAvatar>
         <div children={itemText} />
       </ListItem>
-    )
+    );
   };
 
-  const listElements = data.map((item: any, value: any) => <ListElement element={data[data.length - value - 1]} />);
+  const listElements = data.map((item: any, value: any) => (
+    <ListElement element={data[data.length - value - 1]} />
+  ));
 
-  return <List
-    dense={false}
-    style={{ padding: 0 }}
-    children={listElements}
-  />;
+  return <List dense={false} style={{ padding: 0 }} children={listElements} />;
 }
 
 function AddItemDialog({ handleClose, refetch }: any) {
@@ -166,11 +195,11 @@ function AddItemDialog({ handleClose, refetch }: any) {
     };
     if (name && name.trim() !== "") send_data.comment = comment;
 
-    addGroceryItem(send_data).then(() => {
+    groceryListRequests.ADD(send_data).then(() => {
       refetch();
       handleClose();
     });
-  }
+  };
   return (
     <>
       <DialogTitle children="Add new item" />
@@ -200,29 +229,36 @@ function AddItemDialog({ handleClose, refetch }: any) {
         <Button onClick={handleSubmit} color="primary" children="Add" />
       </DialogActions>
     </>
-  )
+  );
 }
 
 function HistoryTab({ data, refetch, removeFromHistory }: any) {
   const ListElement = ({ element }: any) => (
     <ListItem button divider={true}>
       <ListItemAvatar>
-        <IconButton edge="end" aria-label="delete" onClick={() => {
-          removeFromHistory(element);
-          addGroceryItem(element).then(() => refetch())
-        }}>
+        <IconButton
+          edge="end"
+          aria-label="delete"
+          onClick={() => {
+            removeFromHistory(element);
+            groceryListRequests.ADD(element).then(() => refetch());
+          }}
+        >
           <HistoryIcon color="primary" />
         </IconButton>
       </ListItemAvatar>
-      <ListItemText primary={<Typography children={element?.name} />} secondary={<Typography color="textSecondary" children={element?.comment} />} />
+      <ListItemText
+        primary={<Typography children={element?.name} />}
+        secondary={
+          <Typography color="textSecondary" children={element?.comment} />
+        }
+      />
     </ListItem>
   );
 
-  const listElements = data.map((item: any, value: any) => <ListElement element={item} />);
+  const listElements = data.map((item: any, value: any) => (
+    <ListElement element={item} />
+  ));
 
-  return <List
-    dense={false}
-    style={{ padding: 0 }}
-    children={listElements}
-  />
+  return <List dense={false} style={{ padding: 0 }} children={listElements} />;
 }

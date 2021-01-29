@@ -1,31 +1,31 @@
 import React from "react";
 
-import { ThemeProvider } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import SunIcon from '@material-ui/icons/Brightness5';
-import MoonIcon from '@material-ui/icons/Brightness3';
+import { ThemeProvider } from "@material-ui/core/styles";
+import Drawer from "@material-ui/core/Drawer";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import List from "@material-ui/core/List";
+import Typography from "@material-ui/core/Typography";
+import Divider from "@material-ui/core/Divider";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
+import SunIcon from "@material-ui/icons/Brightness5";
+import MoonIcon from "@material-ui/icons/Brightness3";
 import Box from "@material-ui/core/Box";
 import { Avatar } from "@material-ui/core";
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter as Router, NavLink } from "react-router-dom";
-import { useGoogleLogout } from 'react-google-login';
+import { useGoogleLogout } from "react-google-login";
 
 import { createAppTheme, useAppStyles } from "./AppStyle";
 import { Login } from "./routes/login/Login";
 import { getRoutes, Routes } from "./routes/Routes";
-import { Reducers } from './redux/reducer';
+import { Reducers } from "./redux/reducer";
 import { configConstants } from "./redux/reducers/configReducer";
 
 export default function App() {
@@ -38,9 +38,8 @@ export default function App() {
     <Router>
       <MemoBase children={<Routes />} />
     </Router>
-  )
+  );
 }
-
 
 function Base({ children }: any) {
   const config = useSelector((state: Reducers) => state.config);
@@ -67,19 +66,25 @@ function Base({ children }: any) {
 
         <UserSettings />
       </Box>
-    )
+    );
   };
 
-  const NavItem = ({ url, text, icon }: any) => <NavLink
-    className={classes.drawerLink}
-    to={url}
-    children={(
-      <ListItem button className={classes.drawerListItem} onClick={() => setOpen(false)}>
-        <ListItemIcon children={icon} />
-        <ListItemText primary={text} />
-      </ListItem>
-    )}
-  />
+  const NavItem = ({ url, text, icon }: any) => (
+    <NavLink
+      className={classes.drawerLink}
+      to={url}
+      children={
+        <ListItem
+          button
+          className={classes.drawerListItem}
+          onClick={() => setOpen(false)}
+        >
+          <ListItemIcon children={icon} />
+          <ListItemText primary={text} />
+        </ListItem>
+      }
+    />
+  );
 
   return (
     <ThemeProvider theme={createAppTheme(config.theme)}>
@@ -89,17 +94,28 @@ function Base({ children }: any) {
         <div className={classes.content} children={children} />
       </div>
 
-      <Drawer anchor="left" open={open} onClose={() => { if (open) setOpen(false) }}>
-        <Typography variant="h5" children="Navigation" align="left" className={classes.drawerTitle} />
+      <Drawer
+        anchor="left"
+        open={open}
+        onClose={() => {
+          if (open) setOpen(false);
+        }}
+      >
+        <Typography
+          variant="h5"
+          children="Navigation"
+          align="left"
+          className={classes.drawerTitle}
+        />
         <Divider />
         <List>
-          {getRoutes(config).map((routeConfig) => 
-            <NavItem 
+          {getRoutes(config).map((routeConfig) => (
+            <NavItem
               url={routeConfig.path}
               text={routeConfig.name}
               icon={<routeConfig.icon />}
             />
-          )}
+          ))}
         </List>
       </Drawer>
     </ThemeProvider>
@@ -114,12 +130,16 @@ function UserSettings() {
 
   const { signOut } = useGoogleLogout({
     clientId: process.env.REACT_APP_GOOGLE_ID || "",
-    onLogoutSuccess: () => dispatch({ type: configConstants.SET_USER })
-  })
+    onLogoutSuccess: () => dispatch({ type: configConstants.SET_USER }),
+  });
 
   const handleClick = (event: any) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
-  const changeTheme = () => dispatch({ type: configConstants.SET_THEME, payload: config.theme === "dark" ? "light" : "dark" });
+  const changeTheme = () =>
+    dispatch({
+      type: configConstants.SET_THEME,
+      payload: config.theme === "dark" ? "light" : "dark",
+    });
 
   return (
     <div>
@@ -128,7 +148,9 @@ function UserSettings() {
         aria-controls="simple-menu"
         aria-haspopup="true"
         onClick={handleClick}
-        children={<Avatar alt={config?.user?.name} src={config?.user?.imageUrl} />}
+        children={
+          <Avatar alt={config?.user?.name} src={config?.user?.imageUrl} />
+        }
       />
       <Menu
         id="simple-menu"
@@ -137,9 +159,15 @@ function UserSettings() {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={changeTheme} children={<div className={classes.themeIcon} 
-          children={config.theme == "dark" ? <SunIcon /> : <MoonIcon />} 
-        />} />
+        <MenuItem
+          onClick={changeTheme}
+          children={
+            <div
+              className={classes.themeIcon}
+              children={config.theme == "dark" ? <SunIcon /> : <MoonIcon />}
+            />
+          }
+        />
         <MenuItem onClick={() => signOut()} children="Logout" />
       </Menu>
     </div>
