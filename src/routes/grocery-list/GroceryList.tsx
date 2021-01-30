@@ -1,264 +1,207 @@
 import React from "react";
-import List from "@material-ui/core/List";
-import Typography from "@material-ui/core/Typography";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import IconButton from "@material-ui/core/IconButton";
-import CheckIcon from "@material-ui/icons/Check";
-import TextField from "@material-ui/core/TextField";
-import { useQuery } from "react-query";
-import { Button, ListItemAvatar, Paper } from "@material-ui/core";
-import { green } from "@material-ui/core/colors";
-import { relativeTimeDifference } from "./GroceryListUtils";
-import { useGroceryListStyles } from "./GroceryListStyle";
-import Fab from "@material-ui/core/Fab";
-import AddIcon from "@material-ui/icons/Add";
-import { ErrorCard } from "../../components/error/ErrorCard";
-import { Loading } from "../../components/loading/Loading";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import HistoryIcon from "@material-ui/icons/History";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Zoom from "@material-ui/core/Zoom";
-
-import { Reducers } from "../../redux/reducer";
+import { useQuery } from "react-query";
+import {
+  IconButton,
+  Paper,
+  Typography,
+} from "@material-ui/core";
+import {
+  groceryListRequests,
+} from "../../utils/requests";
+import ListItemText from "@material-ui/core/ListItemText";
+import {  green } from "@material-ui/core/colors";
 import { useSelector } from "react-redux";
-import { groceryListRequests } from "../../utils/requests";
-
-const panels = ["List", "History"];
+import { Reducers } from "../../redux/reducer";
+import { ErrorCard } from "../../components/error/ErrorCard";
+import { Loading } from "../../components/loading/Loading";
+import { AddItem } from "../../components/add-item/AddItem";
+import { PandaList } from "../../components/panda-list/PandaList";
+import { useGroceryListStyle } from "./GroceryListStyle";
+import CheckIcon from "@material-ui/icons/Check";
+import { relativeTimeDifference } from "./GroceryListUtils";
+import RestoreIcon from "@material-ui/icons/Restore";
 
 export function GroceryList() {
+  const classes = useGroceryListStyle();
   const config = useSelector((state: Reducers) => state.config);
-  const { isLoading, error, data, refetch } = useQuery<any, any, any>(
+  const { isLoading, error, data: groceryList, refetch } = useQuery<any>(
     "listData",
     () => groceryListRequests.LIST(config.user_config?.household)
   );
-  const [historyData, setHistoryData] = React.useState<any[]>([]);
+  const [history, setHistory] = React.useState<any[]>([]);
   const [value, setValue] = React.useState(0);
-  const [open, setOpen] = React.useState(false);
-
-  const classes = useGroceryListStyles();
-
-  const addToHistory = (element: any) =>
-    setHistoryData([element, ...historyData]);
-  const removeFromHistory = (element: any) => {
-    const index = historyData.findIndex((el: any) => element.name == el.name);
-    if (index == -1) return;
-    historyData.splice(index, 1);
-    setHistoryData(historyData);
-  };
-
-  const tabs = React.useMemo(
-    () => panels.map((name: string) => <Tab label={name} />),
-    [panels]
-  );
-  const list = React.useMemo(
-    () => <ListTab data={data} refetch={refetch} addToHistory={addToHistory} />,
-    [data, refetch, addToHistory]
-  );
-
-  const history_list = React.useMemo(
-    () => (
-      <HistoryTab
-        data={historyData}
-        refetch={refetch}
-        removeFromHistory={removeFromHistory}
-      />
-    ),
-    [historyData, refetch, removeFromHistory]
-  );
 
   if (error) return <ErrorCard error={error} />;
   if (isLoading) return <Loading />;
-  if (!data) return <ErrorCard />;
+  if (!groceryList) return <ErrorCard />;
 
-  const handleClose = () => setOpen(false);
+  const sortItems = (a: any, b: any) => {
+    if (a.time_created > b.time_created) return -1;
+    if (a.time_created < b.time_created) return 1;
+    return a.name.localeCompare(b.name);
+  };
 
-  const TabPanel = ({ children, value, index }: any) => (
+  const ClickableItem = ({ item }: any) => {
+    const [clicked, setClicked] = React.useState(false);
+
+    return (
+      <ListItemText
+        inset
+        primary={
+          clicked ? (
+            <span className={classes.usernameBox}>
+              Added by{" "}
+              <Typography
+                color="secondary"
+                className={classes.username}
+                children={item.username}
+              />
+            </span>
+          ) : (
+            item.name
+          )
+        }
+        secondary={
+          clicked ? relativeTimeDifference(item.time_created) : item?.comment
+        }
+        onClick={() => setClicked(!clicked)}
+        className={classes.clickableItem}
+      />
+    );
+  };
+
+  const handleRemoveItem = async (item: any) => {
+    return groceryListRequests.DELETE(item).then(() => {
+      setHistory([item, ...history]);
+      refetch();
+    });
+  };
+
+  const handleReAddItem = async (item: any) => {
+    await groceryListRequests
+      .ADD({
+        name: item.name,
+        username: config.user?.name,
+        household: config.user_config?.household,
+      })
+      .then(() => {
+        const new_history = [...history];
+        const index = new_history.findIndex((it: any) => it._id == item._id);
+        if (index == -1) return;
+        new_history.splice(index, 1);
+        setHistory(new_history);
+        refetch();
+      });
+  };
+
+  const lists = [
+    {
+      label: "List",
+      list: (
+        <PandaList
+          createItem={(item, i) => [
+            <IconButton
+              onClick={() => handleRemoveItem(item)}
+              edge="start"
+              children={<CheckIcon />}
+              style={{ color: green[500] }}
+            />,
+            <ClickableItem item={item} />,
+          ]}
+          data={groceryList}
+          sort={sortItems}
+          actionBar={[
+            <AddItem
+              title="Add item"
+              className={classes.addButton}
+              handleAdd={(state: any) => {
+                if (!state.name || state.name.trim() == "")
+                  return {
+                    errors: { name: true },
+                  };
+
+                const send_data: any = {
+                  name: state.name,
+                  username: config.user?.name,
+                  household: config.user_config?.household,
+                };
+
+                if (state.comment && state.comment.trim() !== "")
+                  send_data.comment = state.comment;
+
+                return groceryListRequests
+                  .ADD(send_data)
+                  .then(() => refetch())
+                  .catch(() => ({ errors: {} }));
+              }}
+              inputs={[
+                {
+                  type: "search",
+                  id: "name",
+                  label: "Name",
+                },
+                {
+                  type: "search",
+                  id: "comment",
+                  label: "Comment",
+                },
+              ]}
+            />,
+          ]}
+        />
+      ),
+    },
+    {
+      label: "History",
+      list: (
+        <PandaList
+          createItem={(item, i) => [
+            <IconButton
+              onClick={() => handleReAddItem(item)}
+              edge="start"
+              children={<RestoreIcon />}
+              color="primary"
+            />,
+            <ListItemText inset primary={item.name} />,
+          ]}
+          data={history}
+        />
+      ),
+    },
+  ];
+
+  const TabHeader = (tab: any, i: number) => (
+    <Tab label={tab.label} id={`tab-${i}`} style={{ textTransform: "none" }} />
+  );
+
+  const TabPanel = (tab: any, i: number) => (
     <div
-      role="tabpanel"
-      hidden={value !== index}
       className={classes.tabPanel}
-      children={value === index && children}
+      role="tabpanel"
+      hidden={value !== i}
+      id={`tabpanel-${i}`}
+      children={tab.list}
     />
   );
 
   return (
     <div className={classes.root}>
-      <Paper elevation={4} square>
+      <Paper elevation={4} square className={classes.tabsBox}>
         <Tabs
-          className={classes.tabNav}
+          orientation="horizontal"
           value={value}
-          onChange={(e: any, value: number) => setValue(value)}
+          onChange={(e: any, newValue: number) => setValue(newValue)}
           indicatorColor="primary"
           textColor="primary"
           variant="fullWidth"
-          centered
-          children={tabs}
+          scrollButtons="auto"
+          children={lists.map(TabHeader)}
+          style={{ minWidth: "fit-content" }}
         />
       </Paper>
-
-      <TabPanel value={value} index={0}>
-        {list}
-        <Fab
-          className={classes.addButton}
-          color="primary"
-          children={<AddIcon />}
-          onClick={() => setOpen(true)}
-        />
-        <Dialog open={open} onClose={handleClose}>
-          <AddItemDialog handleClose={handleClose} refetch={refetch} />
-        </Dialog>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        {history_list}
-      </TabPanel>
+      <div className={classes.tabsPanelBox}>{lists.map(TabPanel)}</div>
     </div>
   );
-}
-
-function ListTab({ data, refetch, addToHistory }: any) {
-  const classes = useGroceryListStyles();
-  const ListElement = ({ element }: any) => {
-    const [clicked, setClicked] = React.useState(false);
-
-    const itemText = clicked ? (
-      <ListItemText
-        primary={
-          <Typography className={classes.itemInfo}>
-            Added by&nbsp;
-            <Typography color="secondary">{element?.username}</Typography>
-          </Typography>
-        }
-        secondary={
-          <Typography
-            color="textSecondary"
-            children={relativeTimeDifference(element?.time_created)}
-          />
-        }
-      />
-    ) : (
-      <ListItemText
-        primary={<Typography children={element?.name} />}
-        secondary={
-          <Typography color="textSecondary" children={element?.comment} />
-        }
-      />
-    );
-
-    return (
-      <ListItem
-        button
-        divider={true}
-        onClick={() => {
-          if (element?.username) setClicked(!clicked);
-        }}
-      >
-        <ListItemAvatar>
-          <IconButton
-            edge="end"
-            aria-label="delete"
-            onClick={() => {
-              addToHistory(element);
-              groceryListRequests.DELETE(element).then(() => refetch());
-            }}
-          >
-            <CheckIcon style={{ color: green[500] }} />
-          </IconButton>
-        </ListItemAvatar>
-        <div children={itemText} />
-      </ListItem>
-    );
-  };
-
-  const listElements = data.map((item: any, value: any) => (
-    <ListElement element={data[data.length - value - 1]} />
-  ));
-
-  return <List dense={false} style={{ padding: 0 }} children={listElements} />;
-}
-
-function AddItemDialog({ handleClose, refetch }: any) {
-  const config = useSelector((state: Reducers) => state.config);
-  const [name, setName] = React.useState("");
-  const [comment, setComment] = React.useState("");
-
-  const handleSubmit = () => {
-    if (!name || name.trim() == "") return;
-    const send_data: any = {
-      name,
-      username: config.user?.name,
-      household: config.user_config?.household,
-    };
-    if (name && name.trim() !== "") send_data.comment = comment;
-
-    groceryListRequests.ADD(send_data).then(() => {
-      refetch();
-      handleClose();
-    });
-  };
-  return (
-    <>
-      <DialogTitle children="Add new item" />
-      <DialogContent>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="name"
-          label="Name"
-          type="text"
-          fullWidth
-          value={name}
-          onChange={(e: any) => setName(e.target.value)}
-        />
-        <TextField
-          margin="dense"
-          id="comment"
-          label="Comment"
-          type="text"
-          fullWidth
-          value={comment}
-          onChange={(e: any) => setComment(e.target.value)}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose} color="secondary" children="Cancel" />
-        <Button onClick={handleSubmit} color="primary" children="Add" />
-      </DialogActions>
-    </>
-  );
-}
-
-function HistoryTab({ data, refetch, removeFromHistory }: any) {
-  const ListElement = ({ element }: any) => (
-    <ListItem button divider={true}>
-      <ListItemAvatar>
-        <IconButton
-          edge="end"
-          aria-label="delete"
-          onClick={() => {
-            removeFromHistory(element);
-            groceryListRequests.ADD(element).then(() => refetch());
-          }}
-        >
-          <HistoryIcon color="primary" />
-        </IconButton>
-      </ListItemAvatar>
-      <ListItemText
-        primary={<Typography children={element?.name} />}
-        secondary={
-          <Typography color="textSecondary" children={element?.comment} />
-        }
-      />
-    </ListItem>
-  );
-
-  const listElements = data.map((item: any, value: any) => (
-    <ListElement element={item} />
-  ));
-
-  return <List dense={false} style={{ padding: 0 }} children={listElements} />;
 }

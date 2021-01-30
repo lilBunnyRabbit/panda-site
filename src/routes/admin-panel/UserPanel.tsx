@@ -14,7 +14,6 @@ import {
   List,
   MenuItem,
   Select,
-  TextareaAutosize,
   TextField,
   Typography,
 } from "@material-ui/core";
@@ -29,6 +28,8 @@ import {
   householdsRequests,
 } from "../../utils/requests";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 export function UsersPanel() {
   const classes = useUserPanelStyles();
@@ -188,10 +189,12 @@ function EditUser({ userId, classes, goBack }: any) {
       </AccordionSummary>
       <Divider />
       <AccordionDetails className={classes.userDataBox}>
-        <TextareaAutosize
+        <SyntaxHighlighter
+          wrapLines={true}
+          language="json"
+          style={a11yDark}
+          children={JSON.stringify(data.user, null, 2)}
           className={classes.userData}
-          defaultValue={JSON.stringify(data.user, null, 4)}
-          spellCheck={false}
         />
       </AccordionDetails>
     </Accordion>

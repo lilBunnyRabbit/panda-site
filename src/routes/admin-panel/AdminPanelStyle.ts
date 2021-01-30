@@ -15,9 +15,7 @@ export const useAdminPanelStyles = makeStyles((theme: Theme) => {
     },
     tabPanel: {
       width: "100%",
-      paddingLeft: theme.spacing(3),
-      paddingRight: theme.spacing(3),
-      paddingTop: theme.spacing(3),
+      padding: theme.spacing(3),
     },
     userPanel: {
       height: "100%",

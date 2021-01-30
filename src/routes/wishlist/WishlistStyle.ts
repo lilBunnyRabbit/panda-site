@@ -7,14 +7,21 @@ export const useWishlistStyle = makeStyles((theme: Theme) => {
       display: "flex",
       flexDirection: "column",
       width: "100%",
-      position: "relative"
+      height: "100%",
+      position: "relative",
     },
-    tabs: {
-      borderRight: `1px solid ${theme.palette.divider}`,
-      backgroundColor: theme.palette.background.paper,
+    tabsBox: {
+      height: "48px"
+    },
+    tabsPanelBox: {
+      position: "relative",
+      height: "calc(100% - 48px)"
     },
     tabPanel: {
       width: "100%",
+      height: "100%",
+      flex: 1,
+      position: "relative"
     },
     userPanel: {
       height: "100%",
@@ -34,6 +41,7 @@ export const useWishlistTableStyle = makeStyles((theme: Theme) => {
       position: "relative",
       width: "100%",
       backgroundColor: theme.palette.background.default,
+      overflowY: 'auto'
     },
     titleBox: {
       display: "flex",
@@ -46,12 +54,21 @@ export const useWishlistTableStyle = makeStyles((theme: Theme) => {
       height: "100%",
       width: "100%",
       flex: 1,
+      position: "relative"
     },
     removeButton: {
       color: red[700]
     },
     clickableStar: {
       cursor: "pointer"
+    },
+    editButton: {
+      width: "50%",
+      marginRight: theme.spacing(0.5)
+    },
+    addButton: {
+      width: "50%",
+      marginLeft: theme.spacing(0.5)
     }
   });
 });

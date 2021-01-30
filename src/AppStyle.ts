@@ -40,12 +40,12 @@ export const useAppStyles = makeStyles((theme: Theme) => {
       alignItems: "center",
       paddingLeft: theme.spacing(3),
       paddingRight: theme.spacing(3),
-      height: "8%",
+      height: "80px",
       borderBottom: "1px solid rgb(255, 255, 255, 0.1)",
     },
     content: {
       width: "100%",
-      height: "90%",
+      height: "calc(100vh - 80px)",
       position: "relative",
     },
     drawerTitle: {

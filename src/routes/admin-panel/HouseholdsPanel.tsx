@@ -1,21 +1,17 @@
 import React from "react";
 import { useHouseholdsPanelStyles } from "./AdminPanelStyle";
 import { useQuery } from "react-query";
-import { Chip, IconButton, Paper, Typography } from "@material-ui/core";
-import { householdsRequests, permissionsRequests } from "../../utils/requests";
-import { ErrorCard } from "../../components/error/ErrorCard";
-import { Loading } from "../../components/loading/Loading";
-import FaceIcon from "@material-ui/icons/Face";
-import AddIcon from "@material-ui/icons/Add";
+import { IconButton, Typography } from "@material-ui/core";
+import { householdsRequests } from "../../utils/requests";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import ClearIcon from "@material-ui/icons/Clear";
 import { DataGrid, ColDef, ValueFormatterParams } from "@material-ui/data-grid";
+import { AddItem } from "../../components/add-item/AddItem";
 
 export function HouseholdsPanel() {
   const classes = useHouseholdsPanelStyles();
@@ -68,7 +64,27 @@ export function HouseholdsPanel() {
     <div className={classes.root}>
       <div className={classes.titleBox}>
         <Typography variant="h4" children="Households" />
-        <AddHouseholdBox refetch={refetch} />
+        <AddItem
+          title="Add Household"
+          handleAdd={(state: any) => {
+            if (!state.name || state.name.trim() == "")
+              return {
+                errors: { name: true },
+              };
+
+            return householdsRequests
+              .ADD({ name: state.name })
+              .then(() => refetch())
+              .catch(() => ({ errors: {} }));
+          }}
+          inputs={[
+            {
+              type: "search",
+              id: "name",
+              label: "Name",
+            },
+          ]}
+        />
       </div>
 
       <div className={classes.tableBox}>

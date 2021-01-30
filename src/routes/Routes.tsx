@@ -1,10 +1,9 @@
-import React, { ReactElement } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 import { Reducers } from "../redux/reducer";
 import { ConfigState } from "../redux/reducers/configReducer";
 
-import BallotIcon from "@material-ui/icons/Ballot";
 import HomeIcon from "@material-ui/icons/Home";
 import FingerprintIcon from "@material-ui/icons/Fingerprint";
 import VideogameAssetIcon from '@material-ui/icons/VideogameAsset';

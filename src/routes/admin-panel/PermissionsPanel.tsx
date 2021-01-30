@@ -1,21 +1,13 @@
 import React from "react";
 import { usePermissionsPanelStyles } from "./AdminPanelStyle";
 import { useQuery } from "react-query";
-import { DataGrid } from "@material-ui/data-grid";
 import { Chip, IconButton, Paper, Typography } from "@material-ui/core";
 import { permissionsRequests } from "../../utils/requests";
 import { ErrorCard } from "../../components/error/ErrorCard";
 import { Loading } from "../../components/loading/Loading";
-import FaceIcon from "@material-ui/icons/Face";
 import AddIcon from "@material-ui/icons/Add";
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import { routesConfigs } from "../Routes";
+import { AddItem } from "../../components/add-item/AddItem";
 
 export function PermissionsPanel() {
   const classes = usePermissionsPanelStyles();
@@ -37,17 +29,22 @@ export function PermissionsPanel() {
 
   const PermissionChips = () => {
     return (permissions || []).map((permission: any) => {
-      const icon: any = routesConfigs.find((routeConfig: any) => routeConfig.permission == permission._id)?.icon;
+      const icon: any = routesConfigs.find(
+        (routeConfig: any) => routeConfig.permission == permission._id
+      )?.icon;
       return (
         <Chip
           variant="outlined"
           color="primary"
           onDelete={() => handleRemovePermission(permission._id)}
           label={permission.name}
-          icon={icon && React.createElement(icon, {
-            fontSize: "small"
-          })}
-          style={icon && { paddingLeft: "5px"}}
+          icon={
+            icon &&
+            React.createElement(icon, {
+              fontSize: "small",
+            })
+          }
+          style={icon && { paddingLeft: "5px" }}
         />
       );
     });
@@ -62,62 +59,37 @@ export function PermissionsPanel() {
       <div className={classes.tableBox}>
         <Paper className={classes.permissionsBox}>
           <PermissionChips />
-          <AddPermissionBox refetch={refetch} />
+          <AddItem
+            title="Add Permission"
+            handleAdd={(state: any) => {
+              if (!state.name || state.name.trim() == "")
+                return {
+                  errors: { name: true },
+                };
+
+              return permissionsRequests
+                .ADD({ name: state.name })
+                .then(() => refetch())
+                .catch(() => ({ errors: {} }));
+            }}
+            inputs={[
+              {
+                type: "search",
+                id: "name",
+                label: "Name",
+              },
+            ]}
+            button={
+              <IconButton
+                color="secondary"
+                size="small"
+                style={{ border: "1px solid" }}
+                children={<AddIcon />}
+              />
+            }
+          />
         </Paper>
       </div>
-    </div>
-  );
-}
-
-function AddPermissionBox({ refetch }: any) {
-  const [open, setOpen] = React.useState(false);
-  const [name, setName] = React.useState("");
-
-  const handleAddPermission = () => {
-    if (!name || name.trim() == "") return;
-    permissionsRequests.ADD({ name }).then(handleClose);
-  };
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    refetch();
-    setOpen(false);
-  };
-
-  return (
-    <div>
-      <IconButton
-        color="secondary"
-        size="small"
-        onClick={handleClickOpen}
-        style={{ border: "1px solid" }}
-        children={<AddIcon />}
-      />
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">New Permission</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Name"
-            type="text"
-            fullWidth
-            onChange={(e: any) => setName(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleAddPermission} color="secondary">
-            Add
-          </Button>
-        </DialogActions>
-      </Dialog>
     </div>
   );
 }
