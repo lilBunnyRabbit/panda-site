@@ -3,14 +3,8 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import { useWishlistStyle, useWishlistTableStyle } from "./WishlistStyle";
 import { useQuery } from "react-query";
-import {
-  IconButton,
-  Paper,
-} from "@material-ui/core";
-import {
-  userRequests,
-  wishlistRequests,
-} from "../../utils/requests";
+import { IconButton, Paper, withStyles } from "@material-ui/core";
+import { userRequests, wishlistRequests } from "../../utils/requests";
 import Button from "@material-ui/core/Button";
 import ListItemText from "@material-ui/core/ListItemText";
 import { red } from "@material-ui/core/colors";
@@ -22,6 +16,10 @@ import { Rating } from "@material-ui/lab";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { AddItem } from "../../components/add-item/AddItem";
 import { PandaList } from "../../components/panda-list/PandaList";
+import FavoriteIcon from "@material-ui/icons/Favorite";
+import { PandaIcon } from "../../components/icons/PandaIcon";
+import { PandaEmptyIcon } from "../../components/icons/PandaEmptyIcon";
+import { PandaRating } from "../../components/ratings/PandaRating";
 
 export function Wishlist() {
   const classes = useWishlistStyle();
@@ -126,13 +124,14 @@ function WishlistTable({ userId }: any) {
               }}
             />
           ),
-          <Rating
+          <PandaRating
             name={`item-${item._id}-${i}`}
             value={item.stars}
-            onChange={(event, newValue) =>
+            onChange={(event: any, newValue: any) =>
               edit && handleStarUpdate(item._id, newValue)
             }
             readOnly={!edit}
+            theme={config.theme}
           />,
           <ListItemText inset primary={item.name} />,
         ]}
@@ -186,7 +185,12 @@ function WishlistTable({ userId }: any) {
   return (
     <PandaList
       createItem={(item, i) => [
-        <Rating name={`item-${item._id}-${i}`} value={item.stars} readOnly />,
+        <PandaRating
+          name={`item-${item._id}-${i}`}
+          value={item.stars}
+          readOnly
+          theme={config.theme}
+        />,
         <ListItemText inset primary={item.name} />,
       ]}
       data={wishlist}

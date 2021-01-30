@@ -8,6 +8,9 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { Rating } from "@material-ui/lab";
 import { Typography } from "@material-ui/core";
+import { useSelector } from "react-redux";
+import { Reducers } from "../../redux/reducer";
+import { PandaRating } from "../ratings/PandaRating";
 
 interface AddItemInterface {
   title: string;
@@ -25,6 +28,7 @@ interface AddItemInterface {
 
 export function AddItem(props: AddItemInterface) {
   const classes = useAddItemStyles();
+  const config = useSelector((state: Reducers) => state.config);
   const [open, setOpen] = React.useState(false);
   const [state, setState] = React.useState<any>({});
   const [errors, setErrors] = React.useState<any>({});
@@ -73,13 +77,14 @@ export function AddItem(props: AddItemInterface) {
               children={input.label + ":"}
               style={{ marginRight: "10px" }}
             />
-            <Rating
+            <PandaRating
               name={`add-item-rating-${input.id}`}
               value={state[input.id] || 0}
-              onChange={(event, newValue) =>
+              onChange={(event: any, newValue: any) =>
                 setState({ ...state, [input.id]: newValue || 0 })
               }
               size="large"
+              theme={config.theme}
             />
           </div>
         );
