@@ -3,7 +3,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import { useWishlistStyle, useWishlistTableStyle } from "./WishlistStyle";
 import { useQuery } from "react-query";
-import { IconButton, Paper, withStyles } from "@material-ui/core";
+import { IconButton, Paper } from "@material-ui/core";
 import { userRequests, wishlistRequests } from "../../utils/requests";
 import Button from "@material-ui/core/Button";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -12,13 +12,9 @@ import { useSelector } from "react-redux";
 import { Reducers } from "../../redux/reducer";
 import { ErrorCard } from "../../components/error/ErrorCard";
 import { Loading } from "../../components/loading/Loading";
-import { Rating } from "@material-ui/lab";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { AddItem } from "../../components/add-item/AddItem";
 import { PandaList } from "../../components/panda-list/PandaList";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import { PandaIcon } from "../../components/icons/PandaIcon";
-import { PandaEmptyIcon } from "../../components/icons/PandaEmptyIcon";
 import { PandaRating } from "../../components/ratings/PandaRating";
 
 export function Wishlist() {
