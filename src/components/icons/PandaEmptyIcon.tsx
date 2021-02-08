@@ -2,8 +2,6 @@ import { SvgIcon } from "@material-ui/core";
 import React from "react";
 
 export function PandaEmptyIcon(props: any) {
-  console.log({ props });
-  
   const color = props.theme == "dark" ? "#6f6f6f" : "#b9b9b9";
   const style = {
     fill: color,

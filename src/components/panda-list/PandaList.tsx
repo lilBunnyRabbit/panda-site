@@ -31,7 +31,7 @@ export function PandaList<T>(props: PandaListInterface<T>) {
     <div className={classes.root}>
       <List className={classes.list} children={items} />
       {props.actionBar && (
-        <Paper elevation={3} square className={classes.actionBar} children={props.actionBar} />
+        <Paper elevation={4} square className={classes.actionBar} children={props.actionBar} />
       )}
     </div>
   );

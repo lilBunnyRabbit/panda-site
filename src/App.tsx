@@ -14,7 +14,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import SunIcon from "@material-ui/icons/Brightness5";
 import MoonIcon from "@material-ui/icons/Brightness3";
 import Box from "@material-ui/core/Box";
-import { Avatar } from "@material-ui/core";
+import { Avatar, Paper } from "@material-ui/core";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 
@@ -31,6 +31,28 @@ import { configConstants } from "./redux/reducers/configReducer";
 export default function App() {
   const config = useSelector((state: Reducers) => state.config);
   const MemoBase = React.useMemo(() => Base, []);
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    // const handleResizeEvent = (event: any) => handleResize(event.target);
+
+    // const handleResize = (target: any) => {
+    //   const orientation =
+    //     target.screen.orientation.angle == 0 ? "portrait" : "landscape";
+    //   if(orientation != config.orientation) {
+    //     console.log("setting orientation");
+        
+    //     dispatch({
+    //       type: configConstants.SET_ORIENTATION,
+    //       payload: orientation,
+    //     });
+    //   }
+    // };
+
+    // handleResize(window);
+    // window.addEventListener("orientationchange", handleResizeEvent);
+    // window.addEventListener("resize", handleResizeEvent);
+  }, []);
 
   if (!config?.user || !config?.user_config) return <Login />;
 
@@ -48,7 +70,7 @@ function Base({ children }: any) {
 
   const NavBar = () => {
     return (
-      <Box className={classes.navbar}>
+      <Paper square elevation={1} className={classes.navbar}>
         <IconButton
           color="inherit"
           aria-label="open drawer"
@@ -65,7 +87,7 @@ function Base({ children }: any) {
         </div>
 
         <UserSettings />
-      </Box>
+      </Paper>
     );
   };
 
@@ -149,7 +171,11 @@ function UserSettings() {
         aria-haspopup="true"
         onClick={handleClick}
         children={
-          <Avatar alt={config?.user?.name} src={config?.user?.imageUrl} />
+          <Avatar
+            alt={config?.user?.name}
+            src={config?.user?.imageUrl}
+            className={classes.userButton}
+          />
         }
       />
       <Menu

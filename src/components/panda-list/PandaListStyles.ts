@@ -26,7 +26,8 @@ export const usePandaListStyles = makeStyles((theme: Theme) => {
       width: "100%",
       height: "auto",
       position: "relative",
-      padding: theme.spacing(1)
+      padding: theme.spacing(1),
+      zIndex: 10
     }
   });
 });

@@ -188,7 +188,7 @@ export function GroceryList() {
 
   return (
     <div className={classes.root}>
-      <Paper elevation={4} square className={classes.tabsBox}>
+      <Paper elevation={3} square className={classes.tabsBox}>
         <Tabs
           orientation="horizontal"
           value={value}

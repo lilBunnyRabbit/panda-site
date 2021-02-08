@@ -29,7 +29,6 @@ export function JsonBox({ data }: any) {
         if(Object.keys(root).length == 0) return <KeyValue key={parent} value={""} />;
 
         const children = Object.keys(root).map((key: string) => {
-            console.log({ key });
             
             if(({}).constructor == root[key].constructor) return createJson(key, root[key], level + 1);
             return <KeyValue key={key} value={root[key]} />

@@ -38,7 +38,10 @@ export function AddItem(props: AddItemInterface) {
     return handleClose();
   };
 
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setState({});
+    setOpen(false);
+  }
 
   const Inputs = props.inputs.map((input, i) => {
     switch (input.type) {
@@ -47,7 +50,7 @@ export function AddItem(props: AddItemInterface) {
       case "number":
         return (
           <TextField
-            autoFocus
+            autoFocus={i === 0}
             margin="dense"
             id={input.id}
             label={input.label}

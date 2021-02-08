@@ -41,7 +41,10 @@ export const useAppStyles = makeStyles((theme: Theme) => {
       paddingLeft: theme.spacing(3),
       paddingRight: theme.spacing(3),
       height: "80px",
-      borderBottom: "1px solid rgb(255, 255, 255, 0.1)",
+      borderBottom: `1px solid ${theme.palette.divider}`,
+      borderTop: "none",
+      backgroundColor: "inherit",
+      zIndex: 500
     },
     content: {
       width: "100%",
@@ -76,5 +79,8 @@ export const useAppStyles = makeStyles((theme: Theme) => {
       width: "100%",
       textTransform: "capitalize",
     },
+    userButton: {
+      border: `2px solid ${theme.palette.divider}`
+    }
   });
 });

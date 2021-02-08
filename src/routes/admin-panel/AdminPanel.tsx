@@ -5,6 +5,7 @@ import Tab from "@material-ui/core/Tab";
 import { UsersPanel } from "./UserPanel";
 import { PermissionsPanel } from "./PermissionsPanel";
 import { HouseholdsPanel } from "./HouseholdsPanel";
+import { Paper } from "@material-ui/core";
 
 const tabs = [
   {
@@ -41,17 +42,20 @@ export function AdminPanel() {
 
   return (
     <div className={classes.root}>
-      <Tabs
-        orientation="vertical"
-        variant="scrollable"
-        value={value}
-        onChange={(e: any, newValue: number) => setValue(newValue)}
-        className={classes.tabs}
-        indicatorColor="secondary"
-        textColor="secondary"
-        children={tabs.map(TabHeader)}
-        style={{ minWidth: "fit-content" }}
-      />
+      <Paper elevation={4} square>
+        <Tabs
+          orientation="vertical"
+          variant="scrollable"
+          value={value}
+          onChange={(e: any, newValue: number) => setValue(newValue)}
+          className={classes.tabs}
+          indicatorColor="secondary"
+          textColor="secondary"
+          children={tabs.map(TabHeader)}
+          style={{ minWidth: "fit-content" }}
+        />
+      </Paper>
+
       {tabs.map(TabPanel)}
     </div>
   );

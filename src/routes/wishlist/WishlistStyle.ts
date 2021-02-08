@@ -11,7 +11,8 @@ export const useWishlistStyle = makeStyles((theme: Theme) => {
       position: "relative",
     },
     tabsBox: {
-      height: "48px"
+      height: "48px",
+      zIndex: 10
     },
     tabsPanelBox: {
       position: "relative",
